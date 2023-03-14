@@ -1,6 +1,9 @@
 package com.ll.basic1;
 
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -60,10 +64,10 @@ public class HomeController {
     @GetMapping("/home/addPerson")
     @ResponseBody
     public String addPerson(@RequestParam(defaultValue = "0") int age,@RequestParam(defaultValue = "이름없음") String name){
-        id +=1;
-        lists.add(new Person(id,age,name));
+        Person p = new Person(age,name);
+        lists.add(p);
 
-        return id + "번째 추가";
+        return p.getId() + "번째 추가";
     }
     @GetMapping("/home/removePerson")
     @ResponseBody
@@ -107,14 +111,43 @@ public class HomeController {
     public List<Person> showpeople(){
         return lists;
     }
+
+
+    @GetMapping("/home/cookie/increase")
+    @ResponseBody
+    public int showCookieIncrease(HttpServletRequest req, HttpServletResponse resp) throws  IOException{
+        int countInCookie = 0;
+
+        if(req.getCookies() != null){
+            countInCookie = Arrays.stream(req.getCookies())
+                    .filter(cookie -> cookie.getName().equals("count"))
+                    .map(Cookie::getValue)
+                    .mapToInt(Integer::parseInt)
+                    .findFirst()
+                    .orElse(0);
+        }
+
+        int newCountInCookie = countInCookie + 1;
+
+        resp.addCookie(new Cookie("count", newCountInCookie +""));
+        return newCountInCookie;
+    }
 }
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 class Person{
+    private static int lastid;
     private int id;
     private int age;
     private String name;
+
+    static {
+        lastid = 0;
+    }
+    Person(int age, String name){
+        this(++lastid,age,name);
+    }
 
 }
