@@ -3,6 +3,7 @@ package com.ll.basic1;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,13 +69,14 @@ public class HomeController {
     @ResponseBody
     public String removePerson(int id){
 
+        //Stream 형식
         //조건에 맞는 게 있다면 삭제된다. 삭제된다면 true값을 가짐
         boolean removed = lists.removeIf(Person -> Person.getId() == id);
         //강사님 코드
         if(removed == false){
             return id + "번사람이 존재하지않습니다.";
         }
-        /* for문으로 내가 짠거
+        /* for문으로 내가 짠거 => 기본
         for(int idx = 0; idx <lists.size();idx++){
             if(lists.get(idx).getId() == id){
                 lists.remove(idx);
@@ -86,6 +88,20 @@ public class HomeController {
         return id + "번 사람이 삭제되었습니다.";
     }
 
+    @GetMapping("/home/modifyPerson")
+    @ResponseBody
+    public String modifyPerson(int id,String name,int age){
+
+        for(int idx = 0; idx <lists.size();idx++){
+            if(lists.get(idx).getId() == id){
+                lists.get(idx).setAge(age);
+                lists.get(idx).setName(name);
+                return id + "번 사람이 수정되었습니다.";
+            }
+        }
+        return id + "번 사람이 존재 하지 않습니다.";
+    }
+
     @GetMapping("/home/people")
     @ResponseBody
     public List<Person> showpeople(){
@@ -93,6 +109,7 @@ public class HomeController {
     }
 }
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
 class Person{
