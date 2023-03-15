@@ -1,6 +1,8 @@
 package com.ll.basic1.boundedContext.home.controller;
 
 
+import com.ll.basic1.boundedContext.member.entity.Member;
+import com.ll.basic1.boundedContext.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,12 +26,20 @@ public class HomeController {
     private int count;
     private int id;
 
-    List<Person> lists;
+    private final MemberService memberService;
+    private final List<Person> lists;
 
-    public HomeController() {
+    @Autowired
+    public HomeController(MemberService memberService) {
         count = -1;
         id = 0;
         lists = new ArrayList<>();
+        this.memberService = memberService;
+    }
+    @GetMapping("/home/user1")
+    @ResponseBody
+    public Member showUser1(){
+        return memberService.findByUsername("user1");
     }
 
     @GetMapping("/home/main")

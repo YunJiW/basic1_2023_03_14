@@ -3,15 +3,16 @@ package com.ll.basic1.boundedContext.member.service;
 import com.ll.basic1.base.rsData.RsData;
 import com.ll.basic1.boundedContext.member.entity.Member;
 import com.ll.basic1.boundedContext.member.repository.MemberRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@AllArgsConstructor
 public class MemberService {
     private  final MemberRepository memberRepository;
 
-    public MemberService() {
-       memberRepository = new MemberRepository();
-    }
 
     public RsData tryLogin(String username, String password) {
         if(!password.equals("1234")){
@@ -56,5 +57,9 @@ public class MemberService {
         }
         //성공시 성공출력
         return RsData.of("S-1", "%s 님 환영합니다".formatted(username));
+    }
+
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username);
     }
 }
