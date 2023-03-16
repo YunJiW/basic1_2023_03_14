@@ -20,10 +20,12 @@ import java.util.Arrays;
 public class MemberController {
     private final MemberService memberService;
 
+    private  final Rq rq;
+
+
     @GetMapping("/member/login")
     @ResponseBody
-    public RsData login(String username,String password,HttpServletResponse resp,HttpServletRequest req){
-        Rq rq = new Rq(req,resp);
+    public RsData login(String username,String password){
 
         if(username == null || username.trim().length() == 0)
         {
@@ -38,15 +40,18 @@ public class MemberController {
         //로그인이 되는경우 -> 쿠키를 넣어줌.
         if(rsData.isSucess()){
             Member member = (Member) rsData.getData();
-            rq.setCookie("loginedMemberId",member.getId());
+            rq.setSession("loginedMemberId", member.getId());
         }
         return rsData;
     }
     @GetMapping("/member/logout")
     @ResponseBody
-    public RsData logout(HttpServletRequest req,HttpServletResponse resp) {
-        Rq rq = new Rq(req,resp);
-        rq.removeCookie("loginedMemberId");
+    public RsData logout() {
+        boolean cookieRemoved = rq.removeSession("loginedMemberId");
+
+        if(!cookieRemoved){
+            return RsData.of("S-2", "이미 로그아웃 상태입니다.");
+        }
 
         return RsData.of("S-1","로그아웃");
 
@@ -54,10 +59,8 @@ public class MemberController {
 
     @GetMapping("/member/me")
     @ResponseBody
-    public RsData isYou(HttpServletRequest req,HttpServletResponse resp){
-
-        Rq rq = new Rq(req,resp);
-        long loginedMemberId = rq.getCookieAsLong("loginedMemberId",0);
+    public RsData isYou(){
+        long loginedMemberId = rq.getSessionAsLong("loginedMemberId",0);
 
         boolean isLogined = loginedMemberId > 0;
 

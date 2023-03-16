@@ -29,6 +29,7 @@ public class HomeController {
     private final MemberService memberService;
     private final List<Person> lists;
 
+    //생성자 주입
     @Autowired
     public HomeController(MemberService memberService) {
         count = -1;
