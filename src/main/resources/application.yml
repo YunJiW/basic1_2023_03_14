@@ -1,6 +1,8 @@
 ﻿server:
   port: 8010 # 서버 포트(기본값은 8080)
 spring:
+  profiles:
+    active: dev #기본적으로 dev 환경임을 명시
   thymeleaf:
     cache: false # 타임리프 캐시 끄기
     prefix: file:src/main/resources/templates/ # 타임리프 캐시 끄기(이 설정을 해야 꺼짐)
